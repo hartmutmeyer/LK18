@@ -50,7 +50,7 @@ USE firma;
 
 
 # 2k
-# Liste alle Projekte mit Namen auf, die am selben Ort wie das Projekt „Newbenefits“ stattfinden. Das Projekt
+# Liste alle Projekte mit Namen auf, die am selben Ort wie das Projekt "Newbenefits" stattfinden. Das Projekt
 # "Newbenefits" selbst soll nicht in der Liste erscheinen.
 
 
