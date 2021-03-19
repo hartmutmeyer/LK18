@@ -3,8 +3,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -29,8 +33,12 @@ public class ZeichenZaehlen extends JFrame {
 	private DefaultListModel<String> auswertung = new DefaultListModel<String>();
 	private JList<String> listAuswertung = new JList<String>(auswertung);
 
-	public ZeichenZaehlen(final String title) {
-		super(title);
+	public ZeichenZaehlen() {
+		createGUI();
+	}
+	
+	private void createGUI() {
+		setTitle("Zeichen Zählen");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(WIDTH, HEIGHT);
 		JPanel contentPane = new JPanel();
@@ -86,8 +94,16 @@ public class ZeichenZaehlen extends JFrame {
 	}
 
 	public void zaehlen() {
-		try (FileInputStream is = new FileInputStream(tfDateiname.getText());
-				InputStreamReader in = new InputStreamReader(is, "UTF-8");) {
+		URL url = getClass().getResource(tfDateiname.getText());
+		if (url != null) {
+			try {
+				tfDateiname.setText(URLDecoder.decode(url.getFile(), "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		try (InputStream is = new FileInputStream(tfDateiname.getText());
+				InputStreamReader in = new InputStreamReader(is, "UTF-8")) {
 			int kleinbuchstabe = 0;
 			int trennzeichen = 0;
 			int ziffer = 0;
@@ -116,14 +132,14 @@ public class ZeichenZaehlen extends JFrame {
 					}
 				}
 			}
+			auswertung.clear();
 			auswertung.addElement("Anzahl Kleinbuchstaben: " + kleinbuchstabe);
 			auswertung.addElement("Anzahl Großbuchstaben: " + grossbuchstabe);
 			auswertung.addElement("Anzahl Ziffern: " + ziffer);
 			auswertung.addElement("Anzahl Trennzeichen: " + trennzeichen);
 			auswertung.addElement("Anzahl sonstige Zeichen: " + sonstiges);
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Fehler",
-					JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Fehler", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -132,7 +148,7 @@ public class ZeichenZaehlen extends JFrame {
 			@Override
 			public void run() {
 				try {
-					new ZeichenZaehlen("Zeichen zählen");
+					new ZeichenZaehlen();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
